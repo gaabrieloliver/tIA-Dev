@@ -157,6 +157,10 @@ button {
   color: var(--text-color);
 }
 
+.box-input button:hover {
+  background-color: #d6409fce;
+}
+
 .box-footer {
   width: 100%;
   padding: 20px;
