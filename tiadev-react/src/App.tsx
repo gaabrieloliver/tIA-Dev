@@ -6,9 +6,19 @@ type ProgressType = 'pending' | 'started' | 'done';
 
 function App() {
   const [progress, setProgress] = useState<ProgressType>('pending')
+  const [textarea, setTextarea] = useState<string>('')
+  const [chat, setChat] = useState<string[]>([])
 
   function handleSubmitChat() {
+    // se negação de textarea, significa que está vazio, return para o código não continuar na função. (validação)
+    if (!textarea) {
+      return
+    }
+
     if (progress === 'pending') {
+      setChat(text => [...text, textarea])
+      setChat(text => [...text, 'Aqui será a pergunta gerada por uma IA']);
+
       setProgress('started')
     }
   }
@@ -48,60 +58,59 @@ function App() {
 
         {progress !== "pending" && (
           <div className="box-chat">
-            <h1>Você está estudando sobre <span>HTML</span></h1>
-  
-            <div className="question">
-              <h2><img src="./assets/question.svg" /> Pergunta</h2>
-              <p>
-                Claro! Aqui está a pergunta simulada:
-                "Como você descreveria o seu conhecimento
-                e experiência com HTML? Você poderia
-                fornecer um exemplo de um projeto em
-                que utilizou HTML e como isso impactou
-                positivamente o resultado final?"
-                Aguardo a sua resposta para poder
-                fornecer feedback!
-              </p>
-            </div>
-  
-            <div className="answer">
-              <h2>Sua Resposta</h2>
-              <p>
-                Tenho um conhecimento sólido em HTML.
-                Já construi vários sites
-              </p>
-            </div>
-  
-            <div className="feedback">
-              <h2>Feedback t<span>IA</span>.dev</h2>
-              <p>
-                Ótimo! Parece que você tem uma boa experiência
-                com HTML e construiu vários sites. É importante
-                sempre destacar a prática e os projetos
-                realizados durante uma entrevista de emprego.
-                No entanto, vale ressaltar que seria
-                interessante fornecer um exemplo específico
-                de um projeto em que você utilizou HTML e
-                como suas habilidades impactaram positivamente
-                o resultado final. Isso pode ajudar a destacar
-                suas habilidades de forma mais concreta e
-                transmitir confiança ao entrevistador.
-                Espero que esse feedback seja útil e esteja
-                à disposição para mais perguntas ou informações
-                adicionais.
-              </p>
+            
+            {/* Assunto */}
+            {chat[0] && (
+              <h1>
+                Você está estudando sobre <span>{chat[0]}</span>
+              </h1>
+            )}
+            {/* Pergunta */}
+            {chat[1] && (
+              <div className="question">
+                <h2>
+                  <img src="./assets/question.svg" /> Pergunta
+                </h2>
+                <p>{chat[1]}</p>
+              </div>
+            )}
+            {/* Resposta */}
+            {chat[2] && (
+              <div className="answer">
+                <h2>Sua Resposta</h2>
+                <p>{chat[2]}</p>
+              </div>
+            )}
+            {/* Feedback */}
+            {chat[3] && (
+              <div className="feedback">
+              <h2>
+                Feedback t<span>IA</span>.dev
+              </h2>
+              <p>{chat[3]}</p>
               <div className="actions">
-                <button onClick={handleSubmitChat}>Estudar novo tópico</button>
+                <button>Estudar novo tópico</button>
               </div>
             </div>
+            )}
+
           </div>
         )}
 
         <div className="box-input">
-          <textarea placeholder="Insira o tema que deseja estudar..."></textarea>
-          <button onClick={handleSubmitChat}>Enviar Pergunta</button>
+          <textarea
+            value={textarea}
+            onChange={(element) => setTextarea(element.target.value)}
+            placeholder={
+              progress === "started"
+                ? "Insira sua resposta..."
+                : "Insira o tema que deseja estudar..."
+            }
+          />
+          <button onClick={handleSubmitChat}>
+            {progress === "pending" ? "Enviar Pergunta" : "Enviar Resposta"}
+          </button>
         </div>
-
 
         <footer className="box-footer">
           <p>
