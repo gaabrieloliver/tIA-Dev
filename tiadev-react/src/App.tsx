@@ -8,6 +8,11 @@ function App() {
   const [progress, setProgress] = useState<ProgressType>('pending')
   const [textarea, setTextarea] = useState<string>('')
   const [chat, setChat] = useState<string[]>([])
+  
+  function resetChat() {
+    setProgress('pending')
+    setChat([])
+  }
 
   function handleSubmitChat() {
     // se negação de textarea, significa que está vazio, return para o código não continuar na função. (validação)
@@ -15,12 +20,21 @@ function App() {
       return
     }
 
+    const message = textarea
+    setTextarea('')
+
     if (progress === 'pending') {
-      setChat(text => [...text, textarea])
+      setChat(text => [...text, message])
       setChat(text => [...text, 'Aqui será a pergunta gerada por uma IA']);
 
       setProgress('started')
+      return
     }
+
+    setChat(text => [...text, message]);
+    setChat(text => [...text, "Aqui será a pergunta gerada por uma IA"]);
+
+    setProgress('done')
   }
 
   return (
@@ -28,16 +42,22 @@ function App() {
       <div className="sidebar">
         <details open className="suggestion">
           <summary>Tópicos Sugeridos</summary>
-          <ItemSuggestion title="HTML" />
-          <ItemSuggestion title="CSS" />
-          <ItemSuggestion title="JavaScript" />
-          <ItemSuggestion title="TypeScript" />
+          <ItemSuggestion title="HTML" onClick={() => setTextarea("HTML")} />
+          <ItemSuggestion title="CSS" onClick={() => setTextarea("CSS")} />
+          <ItemSuggestion
+            title="JavaScript"
+            onClick={() => setTextarea("JavaScript")}
+          />
+          <ItemSuggestion
+            title="TypeScript"
+            onClick={() => setTextarea("TypeScript")}
+          />
         </details>
 
         <details open className="historic">
           <summary>Histórico</summary>
-          <ItemSuggestion title="Java" />
-          <ItemSuggestion title="PHP" />
+          <ItemSuggestion title="Java" onClick={() => setTextarea("Java")} />
+          <ItemSuggestion title="PHP" onClick={() => setTextarea("PHP")} />
         </details>
       </div>
 
@@ -58,7 +78,6 @@ function App() {
 
         {progress !== "pending" && (
           <div className="box-chat">
-            
             {/* Assunto */}
             {chat[0] && (
               <h1>
@@ -84,33 +103,34 @@ function App() {
             {/* Feedback */}
             {chat[3] && (
               <div className="feedback">
-              <h2>
-                Feedback t<span>IA</span>.dev
-              </h2>
-              <p>{chat[3]}</p>
-              <div className="actions">
-                <button>Estudar novo tópico</button>
+                <h2>
+                  Feedback t<span>IA</span>.dev
+                </h2>
+                <p>{chat[3]}</p>
+                <div className="actions">
+                  <button onClick={resetChat}>Estudar novo tópico</button>
+                </div>
               </div>
-            </div>
             )}
-
           </div>
         )}
 
-        <div className="box-input">
-          <textarea
-            value={textarea}
-            onChange={(element) => setTextarea(element.target.value)}
-            placeholder={
-              progress === "started"
-                ? "Insira sua resposta..."
-                : "Insira o tema que deseja estudar..."
-            }
-          />
-          <button onClick={handleSubmitChat}>
-            {progress === "pending" ? "Enviar Pergunta" : "Enviar Resposta"}
-          </button>
-        </div>
+        {progress !== "done" && (
+          <div className="box-input">
+            <textarea
+              value={textarea}
+              onChange={(element) => setTextarea(element.target.value)}
+              placeholder={
+                progress === "started"
+                  ? "Insira sua resposta..."
+                  : "Insira o tema que deseja estudar..."
+              }
+            />
+            <button onClick={handleSubmitChat}>
+              {progress === "pending" ? "Enviar Pergunta" : "Enviar Resposta"}
+            </button>
+          </div>
+        )}
 
         <footer className="box-footer">
           <p>
